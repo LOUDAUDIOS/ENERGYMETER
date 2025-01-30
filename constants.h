@@ -52,6 +52,7 @@ void parseJson(String json) {
     digitalWrite(load1, load1State);
     Serial.print("Load 1: ");
     Serial.println(load1State ? "ON" : "OFF");
+    // lcd.setCursor()
   }
 
   if (doc.containsKey("load2State")) {
