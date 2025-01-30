@@ -10,7 +10,7 @@ const char *topic = "espmeter/data";
 const char *serverTopic = "post/data";
 const char *mqtt_username = "espmeter";
 const char *mqtt_password = "123456";
-const int mqtt_port = 8084;
+const int mqtt_port = 1883;
 
 WiFiClient espClient;
 PubSubClient client(espClient);
