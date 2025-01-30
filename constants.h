@@ -14,8 +14,8 @@ const char* postUrl = "https://myespback-tixp400e.b4a.run/data";   // Post URL
 // Variables
 unsigned long previousMillis = 0;
 const long interval = 5000; // 5 seconds
-int voltage = 220;
-int freq = 48;
+float voltage = 220;
+int frequency = 48;
 bool load1State = true;
 bool load2State = false;
 bool load3State = true;

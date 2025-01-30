@@ -31,13 +31,13 @@ void setup() {
     client.setServer(mqtt_broker, mqtt_port);
     client.setCallback(callback);
 
-    postTimer.setCallback([](){
-       String data = createJson(voltage, current, power, energy, amount);
-       Serial.println(data);
-    client.publish(serverTopic, data.c_str());
-    postTimer.reset();
-    });
-    postTimer.setTimeout(3000);
+    // postTimer.setCallback([](){
+    //    String data = createJson(voltage, current, power, energy, amount);
+    //    Serial.println(data);
+    // client.publish(serverTopic, data.c_str());
+    // postTimer.reset();
+    // });
+    // postTimer.setTimeout(3000);
 
     while (!client.connected()) {
         String client_id = "esp32-client-";
@@ -65,27 +65,40 @@ void callback(char *topic, byte *payload, unsigned int length) {
     if (!String(topic).startsWith("post/data"))
         parseJson(msg);
 }
-
+unsigned long tt = 0;
 void loop() {
     // Fetch readings from the PZEM module
-    float voltage = pzem.voltage();
-    float current = pzem.current();
-    float power = pzem.power();
-    float energy = pzem.energy();
-    float frequency = pzem.frequency();
-    float pf = pzem.pf();
+     voltage = pzem.voltage();
+     current = pzem.current();
+     power = pzem.power();
+     energy = pzem.energy();
+     frequency = pzem.frequency();
+     pf = pzem.pf();
 
     if (voltage != NAN && current != NAN && power != NAN) {
-        Serial.printf("Voltage: %.2fV, Current: %.2fA, Power: %.2fW, Energy: %.2fkWh\n", voltage, current, power, energy);
+        // Serial.printf("Voltage: %.2fV, Current: %.2fA, Power: %.2fW, Energy: %.2fkWh\n", voltage, current, power, energy);
     } else {
         Serial.println("Failed to read from PZEM module");
     }
 
     // Calculate the bill based on energy consumption
-    float amount = calculateBill(energy);
+     amount = calculateBill(energy);
+
+    if(millis()-tt>3000){
+      tt = millis();
+      postData();
+    }
+
 
     client.loop();
-    postTimer.run();
+    // postTimer.run();
+}
+
+void postData(){
+   String data = createJson();
+       Serial.println(data);
+    client.publish(serverTopic, data.c_str());
+    // postTimer.reset();
 }
 
 float calculateBill(float energy) {
@@ -97,10 +110,12 @@ float calculateBill(float energy) {
     return energy * 6.75; // Non-Telescopic Rate
 }
 
-String createJson(float voltage, float current, float power, float energy, float amount) {
+String createJson() {
     String json = "{";
     json += "\"voltage\":" + String(voltage) + ",";
     json += "\"current\":" + String(current) + ",";
+    json += "\"freq\":" + String(frequency) + ",";
+    json += "\"pf\":" + String(pf) + ",";
     json += "\"power\":" + String(power) + ",";
     json += "\"energy\":" + String(energy) + ",";
     json += "\"amount\":" + String(amount);
