@@ -16,8 +16,8 @@ WiFiClient espClient;
 PubSubClient client(espClient);
 
 // Define RX and TX pins for PZEM
-#define RX_PIN 16
-#define TX_PIN 17
+#define RX_PIN 18
+#define TX_PIN 19
 
 // PZEM module initialization
 PZEM004Tv30 pzem(Serial2, RX_PIN, TX_PIN);
