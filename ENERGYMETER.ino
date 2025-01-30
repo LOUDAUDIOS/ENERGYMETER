@@ -53,6 +53,8 @@ void setup() {
     }
     client.publish(topic, "Connected");
     client.subscribe(topic);
+    client.publish(serverTopic, "Connected");
+    client.subscribe(serverTopic);
 }
 
 void callback(char *topic, byte *payload, unsigned int length) {
