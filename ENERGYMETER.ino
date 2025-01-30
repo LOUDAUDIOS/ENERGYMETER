@@ -33,6 +33,7 @@ void setup() {
 
     postTimer.setCallback([](){
        String data = createJson(voltage, current, power, energy, amount);
+       Serial.println(data);
     client.publish(serverTopic, data.c_str());
     postTimer.reset();
     });
