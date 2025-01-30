@@ -4,7 +4,7 @@
 #include <WiFiSettings.h>
 #include <PZEM004Tv30.h>
 #include "constants.h"
-#include "LiquidCrystal.h"
+#include <LiquidCrystal.h>
 
 const char *mqtt_broker = "broker.emqx.io";
 const char *topic = "espmeter/data";
@@ -134,7 +134,7 @@ void postData() {
   lcd.print("Freq:"+String(frequency)+"Hz");
   
   lcd.setCursor(10,2);
-  lcd.print("PF:"+String(pf)+);
+  lcd.print("PF:"+String(pf));
   
   lcd.setCursor(0,3);
   lcd.print("Energy:"+String(energy)+"Units");
@@ -142,7 +142,7 @@ void postData() {
   lcd.setCursor(10,3);
   lcd.print("Amount:Rs"+String(amount));
   
-  lcd.setCursor()
+  // lcd.setCursor()
   // postTimer.reset();
 }
 
