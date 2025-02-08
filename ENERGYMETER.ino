@@ -91,7 +91,7 @@ void loop() {
   rstBtn.longPress([]() {
     WiFiSettings.portal();
   },
-                   2000);
+                   2);
 
   if (!WiFi.isConnected()) return;
 
