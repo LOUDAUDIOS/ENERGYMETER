@@ -72,6 +72,7 @@ MyTimer postTimer, load1Timer, load2Timer, load3Timer;
 // Create JSON payload to send MQTT data
 
 void saveEp() {
+  preferences.clear();
   preferences.putFloat("paid", paidamt);
   preferences.putFloat("total", totalAmount);
   preferences.end();
@@ -137,8 +138,10 @@ void parseJson(String json) {
   if (doc.containsKey("paid")) {
     totalAmount = 0;
     paidamt = doc["paid"];
+    Serial.println("Paid amount:"+String(paidamt));
     saveEp();
     client.publish(serverTopic, "paymentsuccess");
+    delay(2000);
     ESP.restart();
   }
 }
