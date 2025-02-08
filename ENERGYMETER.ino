@@ -10,7 +10,7 @@ void setup() {
     Serial.println("Eeprom Error!!!");
   } else {
     readEp();
-    lastAmount = amount;
+    // lastAmount = amount;
   }
 
   pinMode(R1, OUTPUT);
@@ -103,7 +103,6 @@ void loop() {
   if (voltage >= 0) {
     if (millis() - tt > 3000) {
       tt = millis();
-
       if ((amount != lastAmount)&&paidamt>0) {
         lastAmount = amount;
         totalAmount += amount;
@@ -181,6 +180,7 @@ String createJson() {
   json += "\"power\":" + String(power) + ",";
   json += "\"energy\":" + String(energy) + ",";
   json += "\"amount\":" + String(totalAmount);
+  json += "\"paid\":" + String(paidamt);
   json += "}";
   return json;
 }
