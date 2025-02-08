@@ -39,7 +39,7 @@ float power = 330;
 float energy = 0.1;
 float powerT = 0;
 float pf = 0.87;
-float amount = 15.0,paidamt=0,totalAmount=0;
+float amount = 15.0, paidamt = 0, totalAmount = 0;
 unsigned long lastMillis = 0;
 
 float lastAmount = 0;
@@ -70,16 +70,17 @@ PZEM004Tv30 pzem(Serial2, RX_PIN, TX_PIN);
 MyTimer postTimer, load1Timer, load2Timer, load3Timer;
 // Create JSON payload to send MQTT data
 
-void saveEp(){
+void saveEp() {
   EEPROM.writeFloat(2, paidamt);
   EEPROM.writeFloat(3, totalAmount);
   EEPROM.commit();
 }
 
-void readEp(){
+void readEp() {
   paidamt = EEPROM.readFloat(2);
   totalAmount = EEPROM.readFloat(3);
-  }
+}
+
 void parseJson(String json) {
   StaticJsonDocument<256> doc;
   DeserializationError error = deserializeJson(doc, json);
@@ -132,13 +133,11 @@ void parseJson(String json) {
     Serial.println(load3State ? "ON" : "OFF");
   }
 
-  if(doc.containsKey("paid")){
+  if (doc.containsKey("paid")) {
     totalAmount = 0;
     paidamt = doc["paid"];
     saveEp();
-    client.publish(serverTopic,"paymentsuccess");
+    client.publish(serverTopic, "paymentsuccess");
     ESP.restart();
   }
-
-
 }

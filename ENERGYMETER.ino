@@ -6,7 +6,7 @@ void setup() {
   lcd.begin(20, 4);
   Serial.begin(115200);
   SPIFFS.begin(true);
-  if (!EEPROM.begin(512)) {
+  if (!EEPROM.begin(1024)) {
     Serial.println("Eeprom Error!!!");
   } else {
     readEp();
@@ -179,7 +179,7 @@ String createJson() {
   json += "\"pf\":" + String(pf) + ",";
   json += "\"power\":" + String(power) + ",";
   json += "\"energy\":" + String(energy) + ",";
-  json += "\"amount\":" + String(totalAmount);
+  json += "\"amount\":" + String(totalAmount)+",";
   json += "\"paid\":" + String(paidamt);
   json += "}";
   return json;
