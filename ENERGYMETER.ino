@@ -16,7 +16,7 @@ const int mqtt_port = 1883;
 
 // Define LCD pins
 #define RS 13
-#define E  12
+#define E 12
 #define D4 14
 #define D5 27
 #define D6 26
@@ -34,18 +34,18 @@ LiquidCrystal lcd(RS, E, D4, D5, D6, D7);
 PZEM004Tv30 pzem(Serial2, RX_PIN, TX_PIN);
 
 void setup() {
-  lcd.begin(20,4);
+  lcd.begin(20, 4);
   Serial.begin(115200);
   SPIFFS.begin(true);
 
   lcd.clear();
-  lcd.setCursor(0,0);
+  lcd.setCursor(0, 0);
   lcd.print("Connecting WiFi...");
   WiFiSettings.connect();
   Serial.println("Connected to the WiFi network");
-  lcd.setCursor(0,1);
+  lcd.setCursor(0, 1);
   lcd.print("WiFi Connected");
-  lcd.setCursor(0,2);
+  lcd.setCursor(0, 2);
   lcd.print("Connecting server..");
 
 
@@ -58,15 +58,14 @@ void setup() {
     Serial.printf("The client %s connects to the public mqtt broker\n", client_id.c_str());
     if (client.connect(client_id.c_str(), mqtt_username, mqtt_password)) {
       Serial.println("Public emqx mqtt broker connected");
-      lcd.setCursor(0,3);
+      lcd.setCursor(0, 3);
       lcd.print("Server Connected..");
     } else {
       Serial.print("failed with state ");
-      lcd.setCursor(0,3);
+      lcd.setCursor(0, 3);
       lcd.print("Retrying..");
       Serial.print(client.state());
       delay(2000);
-
     }
   }
   client.publish(topic, "Connected");
@@ -105,10 +104,6 @@ void loop() {
 
   // Calculate the bill based on energy consumption
   amount = calculateBill(energy);
-
-
-
-
   client.loop();
   // postTimer.run();
 }
@@ -119,29 +114,29 @@ void postData() {
   client.publish(serverTopic, data.c_str());
   lcd.clear();
 
-  lcd.setCursor(1,0);
+  lcd.setCursor(1, 0);
   lcd.print("SMART ENERGY METER");
-  lcd.setCursor(0,1);
-  lcd.print("Volt:"+String(voltage)+"V");
-  
-  lcd.setCursor(0,1);
-  lcd.print("Curr:"+String(current)+"A");
-  
-  lcd.setCursor(10,1);
-  lcd.print("Power:"+String(power)+"W");
-  
-  lcd.setCursor(0,2);
-  lcd.print("Freq:"+String(frequency)+"Hz");
-  
-  lcd.setCursor(10,2);
-  lcd.print("PF:"+String(pf));
-  
-  lcd.setCursor(0,3);
-  lcd.print("Energy:"+String(energy)+"Units");
-  
-  lcd.setCursor(10,3);
-  lcd.print("Amount:Rs"+String(amount));
-  
+  lcd.setCursor(0, 1);
+  lcd.print("Volt:" + String(voltage) + "V");
+
+  lcd.setCursor(0, 1);
+  lcd.print("Curr:" + String(current) + "A");
+
+  lcd.setCursor(10, 1);
+  lcd.print("Power:" + String(power) + "W");
+
+  lcd.setCursor(0, 2);
+  lcd.print("Freq:" + String(frequency) + "Hz");
+
+  lcd.setCursor(10, 2);
+  lcd.print("PF:" + String(pf));
+
+  lcd.setCursor(0, 3);
+  lcd.print("Energy:" + String(energy) + "Units");
+
+  lcd.setCursor(10, 3);
+  lcd.print("Amount:Rs" + String(amount));
+
   // lcd.setCursor()
   // postTimer.reset();
 }
