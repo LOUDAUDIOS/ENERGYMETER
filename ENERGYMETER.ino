@@ -6,7 +6,7 @@ void setup() {
   lcd.begin(20, 4);
   Serial.begin(115200);
   SPIFFS.begin(true);
-  
+  rstBtn.init(5, INPUT_PULLUP);
   readEp();
 
   pinMode(R1, OUTPUT);
@@ -86,16 +86,23 @@ void callback(char *topic, byte *payload, unsigned int length) {
 unsigned long tt = 0;
 void loop() {
   // Fetch readings from the PZEM module
+
+
+  rstBtn.longPress([]() {
+    WiFiSettings.portal();
+  },
+                   2000);
+
+  if (!WiFi.isConnected()) return;
+
+
+
   voltage = pzem.voltage();
   current = pzem.current();
   power = pzem.power();
   energy = pzem.energy();
   frequency = pzem.frequency();
   pf = pzem.pf();
-
-
-
-
   if (voltage >= 0) {
     if (millis() - tt > 3000) {
       tt = millis();

@@ -9,6 +9,7 @@
 #include <HTTPClient.h>
 #include <ArduinoJson.h>
 #include "myTimer.h"
+#include "MyButton.h"
 
 
 
@@ -69,6 +70,7 @@ Preferences preferences;
 PZEM004Tv30 pzem(Serial2, RX_PIN, TX_PIN);
 
 MyTimer postTimer, load1Timer, load2Timer, load3Timer;
+Button rstBtn;
 // Create JSON payload to send MQTT data
 
 void saveEp() {
