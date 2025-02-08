@@ -6,7 +6,7 @@ void setup() {
   lcd.begin(20, 4);
   Serial.begin(115200);
   SPIFFS.begin(true);
-  preferences.begin("my-app", false);
+  
   readEp();
 
   pinMode(R1, OUTPUT);

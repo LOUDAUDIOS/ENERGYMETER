@@ -73,12 +73,14 @@ MyTimer postTimer, load1Timer, load2Timer, load3Timer;
 
 void saveEp() {
   // preferences.clear();
+  preferences.begin("my-app", false);
   preferences.putFloat("paidamt", paidamt);
   preferences.putFloat("totalAmount", totalAmount);
   preferences.end();
 }
 
 void readEp() {
+  preferences.begin("my-app", false);
   paidamt = preferences.getFloat("paidamt");
   totalAmount = preferences.getFloat("totalAmount");
 }
