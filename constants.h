@@ -72,15 +72,15 @@ MyTimer postTimer, load1Timer, load2Timer, load3Timer;
 // Create JSON payload to send MQTT data
 
 void saveEp() {
-  preferences.clear();
-  preferences.putFloat("paid", paidamt);
-  preferences.putFloat("total", totalAmount);
+  // preferences.clear();
+  preferences.putFloat("paidamt", paidamt);
+  preferences.putFloat("totalAmount", totalAmount);
   preferences.end();
 }
 
 void readEp() {
-  paidamt = preferences.getFloat("paid");
-  totalAmount = preferences.getFloat("total");
+  paidamt = preferences.getFloat("paidamt");
+  totalAmount = preferences.getFloat("totalAmount");
 }
 
 void parseJson(String json) {
