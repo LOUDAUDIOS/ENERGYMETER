@@ -53,11 +53,11 @@ void setup() {
     digitalWrite(R1, 0);
     client.publish(serverTopic,"{load1:false}");
   });
-  load1Timer.setCallback([]() {
+  load2Timer.setCallback([]() {
     digitalWrite(R2, 0);
     client.publish(serverTopic,"{load2:false}");
   });
-  load1Timer.setCallback([]() {
+  load3Timer.setCallback([]() {
     digitalWrite(R2, 0);
     client.publish(serverTopic,"{load3:false}");
   });
