@@ -71,13 +71,13 @@ MyTimer postTimer, load1Timer, load2Timer, load3Timer;
 // Create JSON payload to send MQTT data
 
 void saveEp() {
-  EEPROM.writeFloat(2, paidamt);
+  EEPROM.writeFloat(5, paidamt);
   EEPROM.writeFloat(3, totalAmount);
   EEPROM.commit();
 }
 
 void readEp() {
-  paidamt = EEPROM.readFloat(2);
+  paidamt = EEPROM.readFloat(5);
   totalAmount = EEPROM.readFloat(3);
 }
 
