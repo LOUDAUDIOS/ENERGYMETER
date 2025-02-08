@@ -7,9 +7,10 @@
 const char* ssid = "192.161.4.1";         // Replace with your WiFi SSID
 const char* password = "myname@7012";                // Replace with your WiFi password
 
-// URLs
-const char* fetchUrl = "https://myespback-tixp400e.b4a.run/data"; // Fetch URL
-const char* postUrl = "https://myespback-tixp400e.b4a.run/data";   // Post URL
+const char* SHEETSDB_URL = "https://sheetdb.io/api/v1/y2vnnm6vl0cow";  
+char* SHEETSDB_URL_PATCH = "https://sheetdb.io/api/v1/y2vnnm6vl0cow/";  
+
+
 
 // Variables
 unsigned long previousMillis = 0;
@@ -26,6 +27,10 @@ float powerT = 0;
 float pf = 0.87;
 float amount = 15.0;
 unsigned long lastMillis = 0;
+
+int lastUpdatedTime = 0;
+int currentTime = 0;
+String lasEnergy = "";
 
 #define R1 15
 #define R2 2
