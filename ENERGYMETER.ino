@@ -6,9 +6,14 @@ void setup() {
   lcd.begin(20, 4);
   Serial.begin(115200);
   SPIFFS.begin(true);
-  if (!EEPROM.begin(1024)) {
+  if (!EEPROM.begin(512)) {
     Serial.println("Eeprom Error!!!");
+    
   } else {
+    EEPROM.write(4, 45);
+    delay(500);
+    if(EEPROM.read(4)!=45){Serial.println("EEPROM ERROR");while(1);}
+    else
     readEp();
     // lastAmount = amount;
   }
