@@ -32,7 +32,7 @@ unsigned long lastMillis = 0;
 #define load3 17
 
 
-MyTimer postTimer;
+MyTimer postTimer,load1Timer, load2Timer, load3Timer;
 // Create JSON payload to send MQTT data
 
 
@@ -44,6 +44,25 @@ void parseJson(String json) {
     Serial.print("JSON parse failed: ");
     Serial.println(error.c_str());
     return;
+  }
+
+  if(doc.containsKey("time1")){
+    Serial.println("Load1 timer start");
+    // Serial.println((String)doc["time1"]);
+    load1Timer.setTimeout(Time(0,(long)doc["time1"]));
+    load1Timer.reset();
+  }
+  if(doc.containsKey("time2")){
+    Serial.println("Load2 timer start");
+    // Serial.println(doc["time2"]);
+    load2Timer.setTimeout(Time(0,(long)doc["time2"]));
+    load2Timer.reset();
+  }
+  if(doc.containsKey("time3")){
+    Serial.println("Load3 timer start");
+    // Serial.println(doc["time3"]);
+    load3Timer.setTimeout(Time(0,(long)doc["time3"]));
+    load3Timer.reset();
   }
 
   // Check and update load states

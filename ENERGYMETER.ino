@@ -16,11 +16,15 @@ const int mqtt_port = 1883;
 
 // Define LCD pins
 #define RS 13
-#define E  12
+#define E 12
 #define D4 14
 #define D5 27
 #define D6 26
 #define D7 25
+
+#define R1 15
+#define R2 2
+#define R3 4
 
 WiFiClient espClient;
 PubSubClient client(espClient);
@@ -34,18 +38,44 @@ LiquidCrystal lcd(RS, E, D4, D5, D6, D7);
 PZEM004Tv30 pzem(Serial2, RX_PIN, TX_PIN);
 
 void setup() {
-  lcd.begin(20,4);
+  lcd.begin(20, 4);
   Serial.begin(115200);
   SPIFFS.begin(true);
 
+  pinMode(R1, OUTPUT);
+  pinMode(R2, OUTPUT);
+  pinMode(R3, OUTPUT);
+
+  digitalWrite(R1, 0);
+  digitalWrite(R2, 0);
+  digitalWrite(R3, 0);
+
+
+  load1Timer.setCallback([]() {
+    digitalWrite(R1, 0);
+    client.publish(serverTopic,"{load1:false}");
+  });
+  load1Timer.setCallback([]() {
+    digitalWrite(R2, 0);
+    client.publish(serverTopic,"{load2:false}");
+  });
+  load1Timer.setCallback([]() {
+    digitalWrite(R2, 0);
+    client.publish(serverTopic,"{load3:false}");
+  });
+
   lcd.clear();
-  lcd.setCursor(0,0);
+  lcd.setCursor(1, 0);
+  lcd.print("SMART ENERGY METER");
+  delay(3000);
+  lcd.clear();
+  lcd.setCursor(0, 0);
   lcd.print("Connecting WiFi...");
   WiFiSettings.connect();
   Serial.println("Connected to the WiFi network");
-  lcd.setCursor(0,1);
+  lcd.setCursor(0, 1);
   lcd.print("WiFi Connected");
-  lcd.setCursor(0,2);
+  lcd.setCursor(0, 2);
   lcd.print("Connecting server..");
 
 
@@ -58,15 +88,14 @@ void setup() {
     Serial.printf("The client %s connects to the public mqtt broker\n", client_id.c_str());
     if (client.connect(client_id.c_str(), mqtt_username, mqtt_password)) {
       Serial.println("Public emqx mqtt broker connected");
-      lcd.setCursor(0,3);
+      lcd.setCursor(0, 3);
       lcd.print("Server Connected..");
     } else {
       Serial.print("failed with state ");
-      lcd.setCursor(0,3);
+      lcd.setCursor(0, 3);
       lcd.print("Retrying..");
       Serial.print(client.state());
       delay(2000);
-
     }
   }
   client.publish(topic, "Connected");
@@ -93,7 +122,11 @@ void loop() {
   frequency = pzem.frequency();
   pf = pzem.pf();
 
-  if (voltage != NAN && current != NAN && power != NAN) {
+  digitalWrite(R1, load1State);
+  digitalWrite(R2, load2State);
+  digitalWrite(R3, load3State);
+
+  if (voltage >= 0) {
     if (millis() - tt > 3000) {
       tt = millis();
       postData();
@@ -110,6 +143,9 @@ void loop() {
 
 
   client.loop();
+  load1Timer.run();
+  load2Timer.run();
+  load3Timer.run();
   // postTimer.run();
 }
 
@@ -119,29 +155,31 @@ void postData() {
   client.publish(serverTopic, data.c_str());
   lcd.clear();
 
-  lcd.setCursor(1,0);
-  lcd.print("SMART ENERGY METER");
-  lcd.setCursor(0,1);
-  lcd.print("Volt:"+String(voltage)+"V");
-  
-  lcd.setCursor(0,1);
-  lcd.print("Curr:"+String(current)+"A");
-  
-  lcd.setCursor(10,1);
-  lcd.print("Power:"+String(power)+"W");
-  
-  lcd.setCursor(0,2);
-  lcd.print("Freq:"+String(frequency)+"Hz");
-  
-  lcd.setCursor(10,2);
-  lcd.print("PF:"+String(pf));
-  
-  lcd.setCursor(0,3);
-  lcd.print("Energy:"+String(energy)+"Units");
-  
-  lcd.setCursor(10,3);
-  lcd.print("Amount:Rs"+String(amount));
-  
+  lcd.setCursor(0, 0);
+  lcd.print(" SMART ENERGY METER");
+
+  lcd.setCursor(0, 1);
+  lcd.print("VOL:" + String(voltage) + "V");
+
+  lcd.setCursor(12, 1);
+  lcd.print("CUR:" + String(current, 1) + "A");
+
+  lcd.setCursor(0, 2);
+  lcd.print("PWR:" + String(power) + "W");
+
+  lcd.setCursor(12, 2);
+  lcd.print("FRQ:" + String(frequency) + "Hz");
+
+  lcd.setCursor(0, 3);
+  lcd.print("ENG:" + String(energy) + "KWH");
+
+  lcd.setCursor(12, 3);
+  lcd.print("PF:" + String(pf));
+
+
+
+
+
   // lcd.setCursor()
   // postTimer.reset();
 }
