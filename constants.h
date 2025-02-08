@@ -71,15 +71,15 @@ MyTimer postTimer, load1Timer, load2Timer, load3Timer;
 // Create JSON payload to send MQTT data
 
 void saveEp(){
-  EEPROM.writeFloat(0, paidamt);
-  EEPROM.writeFloat(1, totalAmount);
+  EEPROM.writeFloat(2, paidamt);
+  EEPROM.writeFloat(3, totalAmount);
   EEPROM.commit();
 }
 
 void readEp(){
-  paidamt = EEPROM.readFloat(0);
-  totalAmount = EEPROM.readFloat(1);
-}
+  paidamt = EEPROM.readFloat(2);
+  totalAmount = EEPROM.readFloat(3);
+  }
 void parseJson(String json) {
   StaticJsonDocument<256> doc;
   DeserializationError error = deserializeJson(doc, json);

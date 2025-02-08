@@ -6,10 +6,9 @@ void setup() {
   lcd.begin(20, 4);
   Serial.begin(115200);
   SPIFFS.begin(true);
-  if(!EEPROM.begin(512)){
+  if (!EEPROM.begin(512)) {
     Serial.println("Eeprom Error!!!");
-  }
-  else{
+  } else {
     readEp();
     lastAmount = amount;
   }
@@ -82,12 +81,11 @@ void callback(char *topic, byte *payload, unsigned int length) {
     msg += ((char)payload[i]);
   }
   if (!String(topic).startsWith("post/data"))
-  if(msg.startsWith("alive")){
-    String m = "{\"paid\":"+String(paidamt)+"}";
-    client.publish(serverTopic,m.c_str());
-  }
-    else
-    parseJson(msg);
+    if (msg.startsWith("alive")) {
+      String m = "{\"paid\":" + String(paidamt) + "}";
+      client.publish(serverTopic, m.c_str());
+    } else
+      parseJson(msg);
 }
 unsigned long tt = 0;
 void loop() {
@@ -98,13 +96,19 @@ void loop() {
   energy = pzem.energy();
   frequency = pzem.frequency();
   pf = pzem.pf();
-  
+
 
 
 
   if (voltage >= 0) {
     if (millis() - tt > 3000) {
       tt = millis();
+
+      if ((amount != lastAmount)&&paidamt>0) {
+        lastAmount = amount;
+        totalAmount += amount;
+        saveEp();
+      }
       postData();
     }
     // Serial.printf("Voltage: %.2fV, Current: %.2fA, Power: %.2fW, Energy: %.2fkWh\n", voltage, current, power, energy);
@@ -115,11 +119,8 @@ void loop() {
   // Calculate the bill based on energy consumption
   amount = calculateBill(energy);
 
-  if(amount!=lastAmount){
-    totalAmount += amount;
-    saveEp();
-  }
- 
+
+
   client.loop();
   load1Timer.run();
   load2Timer.run();
@@ -183,5 +184,3 @@ String createJson() {
   json += "}";
   return json;
 }
-
-
