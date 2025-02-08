@@ -4,17 +4,22 @@
 #include "myTimer.h"
 
 // WiFi credentials
-const char* ssid = "192.161.4.1";         // Replace with your WiFi SSID
-const char* password = "myname@7012";                // Replace with your WiFi password
+const char *ssid = "192.161.4.1";      // Replace with your WiFi SSID
+const char *password = "myname@7012";  // Replace with your WiFi password
 
-const char* SHEETSDB_URL = "https://sheetdb.io/api/v1/y2vnnm6vl0cow";  
-char* SHEETSDB_URL_PATCH = "https://sheetdb.io/api/v1/y2vnnm6vl0cow/";  
+
+const char *mqtt_broker = "broker.emqx.io";
+const char *topic = "espmeter/data";
+const char *serverTopic = "post/data";
+const char *mqtt_username = "espmeter";
+const char *mqtt_password = "123456";
+const int mqtt_port = 1883;
 
 
 
 // Variables
 unsigned long previousMillis = 0;
-const long interval = 5000; // 5 seconds
+const long interval = 5000;  // 5 seconds
 float voltage = 220;
 int frequency = 48;
 bool load1State = true;
@@ -36,7 +41,15 @@ String lasEnergy = "";
 #define R2 2
 #define R3 4
 
-MyTimer postTimer,load1Timer, load2Timer, load3Timer;
+// Define LCD pins
+#define RS 13
+#define E 12
+#define D4 14
+#define D5 27
+#define D6 26
+#define D7 25
+
+MyTimer postTimer, load1Timer, load2Timer, load3Timer;
 // Create JSON payload to send MQTT data
 
 
@@ -50,22 +63,22 @@ void parseJson(String json) {
     return;
   }
 
-  if(doc.containsKey("time1")){
+  if (doc.containsKey("time1")) {
     Serial.println("Load1 timer start");
     // Serial.println((String)doc["time1"]);
-    load1Timer.setTimeout(Time(0,(long)doc["time1"]));
+    load1Timer.setTimeout(Time(0, (long)doc["time1"]));
     load1Timer.reset();
   }
-  if(doc.containsKey("time2")){
+  if (doc.containsKey("time2")) {
     Serial.println("Load2 timer start");
     // Serial.println(doc["time2"]);
-    load2Timer.setTimeout(Time(0,(long)doc["time2"]));
+    load2Timer.setTimeout(Time(0, (long)doc["time2"]));
     load2Timer.reset();
   }
-  if(doc.containsKey("time3")){
+  if (doc.containsKey("time3")) {
     Serial.println("Load3 timer start");
     // Serial.println(doc["time3"]);
-    load3Timer.setTimeout(Time(0,(long)doc["time3"]));
+    load3Timer.setTimeout(Time(0, (long)doc["time3"]));
     load3Timer.reset();
   }
 
@@ -92,7 +105,3 @@ void parseJson(String json) {
     Serial.println(load3State ? "ON" : "OFF");
   }
 }
-
-
-
-

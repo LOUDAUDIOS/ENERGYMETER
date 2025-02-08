@@ -5,36 +5,10 @@
 #include <PZEM004Tv30.h>
 #include "constants.h"
 #include <LiquidCrystal.h>
-#include <HTTPClient.h>
-#include <WiFiUdp.h>
-#include <NTPClient.h>
-
-// #include <EEPROM.h>
-
-const char *mqtt_broker = "broker.emqx.io";
-const char *topic = "espmeter/data";
-const char *serverTopic = "post/data";
-const char *mqtt_username = "espmeter";
-const char *mqtt_password = "123456";
-const int mqtt_port = 1883;
-
-
-// Define LCD pins
-#define RS 13
-#define E 12
-#define D4 14
-#define D5 27
-#define D6 26
-#define D7 25
-
-
 
 WiFiClient espClient;
 PubSubClient client(espClient);
 LiquidCrystal lcd(RS, E, D4, D5, D6, D7);
-
-WiFiUDP ntpUDP;
-NTPClient timeClient(ntpUDP, "pool.ntp.org", 19800, 60000);
 
 // Define RX and TX pins for PZEM
 #define RX_PIN 18
@@ -47,10 +21,6 @@ void setup() {
   lcd.begin(20, 4);
   Serial.begin(115200);
   SPIFFS.begin(true);
-  timeClient.begin();
-  // if(!EPROM.begin(512)){
-  //   Serial.println("EEPROM ERROR!!!!");
-  // }
 
   pinMode(R1, OUTPUT);
   pinMode(R2, OUTPUT);
@@ -147,22 +117,6 @@ void loop() {
 
   // Calculate the bill based on energy consumption
   amount = calculateBill(energy);
-
-  timeClient.update();
-
-  time_t epochTime = timeClient.getEpochTime();
-  struct tm *ptm = gmtime((time_t *)&epochTime);
-
-  // Format date as a string (DD-MM-YYYY)
-  char dateStr[11];
-  snprintf(dateStr, sizeof(dateStr), "%02d-%02d-%04d", ptm->tm_mday, ptm->tm_mon + 1, ptm->tm_year + 1900);
-  String date = String(dateStr);
-
-  if(energy>0)
-  if(String(energy,2)!=lasEnergy){
-    lasEnergy = String(energy,2);
-    updateExcell(date,lasEnergy,1);
-  }
  
   client.loop();
   load1Timer.run();
@@ -170,45 +124,6 @@ void loop() {
   load3Timer.run();
   // postTimer.run();
 }
-
-void updateExcell(String en, String date,bool update) {
-
-  HTTPClient http;
-  http.begin(update?(SHEETSDB_URL_PATCH+date):SHEETSDB_URL);
-  http.addHeader("Content-Type", "application/json");
- 
-
-  String json = "{";
-  json += "\"DATE\":\""+date+"\",";
-  json += "\"USAGE (KWH)\":" + String(energy, 2);
-  json += "}";
-
-  int httpResponseCode = update?http.PATCH(json):http.POST(json);
-
-  if (httpResponseCode == 201) {
-    Serial.println("Daily data saved successfully!");
-  } else {
-    Serial.println("Failed to save daily data: " + String(httpResponseCode));
-    Serial.println("Tried with: "+json);
-  }
-
-  http.end();
-
-
-}
-
-// void saveEP(){
-//   EEPROM.update(0,energy);
-//   EEPROM.update(1,amount);
-//   EEPROM.update(2,lastUpdatedTime);
-//   EEPROM.commit();
-// }
-
-// void readEP(){
-//   energy = EEPROM.read(0);
-//   amount = EEPROM.read(1);
-
-// }
 
 void postData() {
   String data = createJson();
