@@ -27,7 +27,9 @@ float pf = 0.87;
 float amount = 15.0;
 unsigned long lastMillis = 0;
 
-
+#define R1 15
+#define R2 2
+#define R3 4
 
 MyTimer postTimer,load1Timer, load2Timer, load3Timer;
 // Create JSON payload to send MQTT data

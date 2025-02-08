@@ -22,9 +22,7 @@ const int mqtt_port = 1883;
 #define D6 26
 #define D7 25
 
-#define R1 15
-#define R2 2
-#define R3 4
+
 
 WiFiClient espClient;
 PubSubClient client(espClient);
