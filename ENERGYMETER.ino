@@ -51,15 +51,15 @@ void setup() {
 
   load1Timer.setCallback([]() {
     digitalWrite(R1, 0);
-    client.publish(serverTopic,"{load1:false}");
+    client.publish(serverTopic,"{\"load1\":false}");
   });
   load2Timer.setCallback([]() {
     digitalWrite(R2, 0);
-    client.publish(serverTopic,"{load2:false}");
+    client.publish(serverTopic,"{\"load2\":false}");
   });
   load3Timer.setCallback([]() {
     digitalWrite(R2, 0);
-    client.publish(serverTopic,"{load3:false}");
+    client.publish(serverTopic,"{\"load3\":false}");
   });
 
   lcd.clear();
