@@ -6,17 +6,7 @@ void setup() {
   lcd.begin(20, 4);
   Serial.begin(115200);
   SPIFFS.begin(true);
-  if (!EEPROM.begin(512)) {
-    Serial.println("Eeprom Error!!!");
-    
-  } else {
-    EEPROM.write(4, 45);
-    delay(500);
-    if(EEPROM.read(4)!=45){Serial.println("EEPROM ERROR");while(1);}
-    else
-    readEp();
-    // lastAmount = amount;
-  }
+  preferences.begin("my-app", false);
 
   pinMode(R1, OUTPUT);
   pinMode(R2, OUTPUT);
@@ -108,7 +98,7 @@ void loop() {
   if (voltage >= 0) {
     if (millis() - tt > 3000) {
       tt = millis();
-      if ((amount != lastAmount)&&paidamt>0) {
+      if ((amount != lastAmount) && paidamt > 0) {
         lastAmount = amount;
         totalAmount += amount;
         saveEp();
@@ -184,7 +174,7 @@ String createJson() {
   json += "\"pf\":" + String(pf) + ",";
   json += "\"power\":" + String(power) + ",";
   json += "\"energy\":" + String(energy) + ",";
-  json += "\"amount\":" + String(totalAmount)+",";
+  json += "\"amount\":" + String(totalAmount) + ",";
   json += "\"paid\":" + String(paidamt);
   json += "}";
   return json;

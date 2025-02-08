@@ -4,7 +4,7 @@
 #include <WiFiSettings.h>
 #include <PZEM004Tv30.h>
 #include <LiquidCrystal.h>
-#include <EEPROM.h>
+#include <Preferences.h>
 #include <WiFi.h>
 #include <HTTPClient.h>
 #include <ArduinoJson.h>
@@ -59,6 +59,7 @@ float lastAmount = 0;
 WiFiClient espClient;
 PubSubClient client(espClient);
 LiquidCrystal lcd(RS, E, D4, D5, D6, D7);
+Preferences preferences;
 
 // Define RX and TX pins for PZEM
 #define RX_PIN 18
@@ -71,14 +72,14 @@ MyTimer postTimer, load1Timer, load2Timer, load3Timer;
 // Create JSON payload to send MQTT data
 
 void saveEp() {
-  EEPROM.writeFloat(5, paidamt);
-  EEPROM.writeFloat(3, totalAmount);
-  EEPROM.commit();
+  preferences.putFloat("paid", paidamt);
+  preferences.putFloat("total", totalAmount);
+  preferences.end();
 }
 
 void readEp() {
-  paidamt = EEPROM.readFloat(5);
-  totalAmount = EEPROM.readFloat(3);
+  paidamt = preferences.getFloat("paid");
+  totalAmount = preferences.getFloat("total");
 }
 
 void parseJson(String json) {
