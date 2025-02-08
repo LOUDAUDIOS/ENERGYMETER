@@ -1,26 +1,18 @@
-#include <WiFi.h>
-#include <PubSubClient.h>
-#include <SPIFFS.h>
-#include <WiFiSettings.h>
-#include <PZEM004Tv30.h>
+
 #include "constants.h"
-#include <LiquidCrystal.h>
 
-WiFiClient espClient;
-PubSubClient client(espClient);
-LiquidCrystal lcd(RS, E, D4, D5, D6, D7);
-
-// Define RX and TX pins for PZEM
-#define RX_PIN 18
-#define TX_PIN 19
-
-// PZEM module initialization
-PZEM004Tv30 pzem(Serial2, RX_PIN, TX_PIN);
 
 void setup() {
   lcd.begin(20, 4);
   Serial.begin(115200);
   SPIFFS.begin(true);
+  if(!EEPROM.begin(512)){
+    Serial.println("Eeprom Error!!!");
+  }
+  else{
+    readEp();
+    lastAmount = amount;
+  }
 
   pinMode(R1, OUTPUT);
   pinMode(R2, OUTPUT);
@@ -90,6 +82,11 @@ void callback(char *topic, byte *payload, unsigned int length) {
     msg += ((char)payload[i]);
   }
   if (!String(topic).startsWith("post/data"))
+  if(msg.startsWith("alive")){
+    String m = "{\"paid\":"+String(paidamt)+"}";
+    client.publish(serverTopic,m.c_str());
+  }
+    else
     parseJson(msg);
 }
 unsigned long tt = 0;
@@ -117,6 +114,11 @@ void loop() {
 
   // Calculate the bill based on energy consumption
   amount = calculateBill(energy);
+
+  if(amount!=lastAmount){
+    totalAmount += amount;
+    saveEp();
+  }
  
   client.loop();
   load1Timer.run();
@@ -177,7 +179,9 @@ String createJson() {
   json += "\"pf\":" + String(pf) + ",";
   json += "\"power\":" + String(power) + ",";
   json += "\"energy\":" + String(energy) + ",";
-  json += "\"amount\":" + String(amount);
+  json += "\"amount\":" + String(totalAmount);
   json += "}";
   return json;
 }
+
+
