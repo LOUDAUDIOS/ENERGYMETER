@@ -122,9 +122,7 @@ void loop() {
   frequency = pzem.frequency();
   pf = pzem.pf();
 
-  digitalWrite(R1, load1State);
-  digitalWrite(R2, load2State);
-  digitalWrite(R3, load3State);
+  
 
   if (voltage >= 0) {
     if (millis() - tt > 3000) {

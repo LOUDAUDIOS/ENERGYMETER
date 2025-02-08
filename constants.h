@@ -27,9 +27,6 @@ float pf = 0.87;
 float amount = 15.0;
 unsigned long lastMillis = 0;
 
-#define load1 4
-#define load2 16
-#define load3 17
 
 
 MyTimer postTimer,load1Timer, load2Timer, load3Timer;
@@ -68,7 +65,7 @@ void parseJson(String json) {
   // Check and update load states
   if (doc.containsKey("load1State")) {
     load1State = doc["load1State"];
-    digitalWrite(load1, load1State);
+    digitalWrite(R1, load1State);
     Serial.print("Load 1: ");
     Serial.println(load1State ? "ON" : "OFF");
     // lcd.setCursor()
@@ -76,14 +73,14 @@ void parseJson(String json) {
 
   if (doc.containsKey("load2State")) {
     load2State = doc["load2State"];
-    digitalWrite(load2, load2State);
+    digitalWrite(R2, load2State);
     Serial.print("Load 2: ");
     Serial.println(load2State ? "ON" : "OFF");
   }
 
   if (doc.containsKey("load3State")) {
     load3State = doc["load3State"];
-    digitalWrite(load3, load3State);
+    digitalWrite(R3, load3State);
     Serial.print("Load 3: ");
     Serial.println(load3State ? "ON" : "OFF");
   }
