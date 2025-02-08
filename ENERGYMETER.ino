@@ -90,6 +90,7 @@ void loop() {
 
   rstBtn.longPress([]() {
     WiFiSettings.portal();
+    Serial.println(WiFiSettings.password);
   },
                    2);
 
