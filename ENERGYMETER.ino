@@ -7,6 +7,7 @@ void setup() {
   Serial.begin(115200);
   SPIFFS.begin(true);
   preferences.begin("my-app", false);
+  readEp();
 
   pinMode(R1, OUTPUT);
   pinMode(R2, OUTPUT);
