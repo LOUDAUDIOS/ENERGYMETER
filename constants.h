@@ -43,7 +43,7 @@ float pf = 0.87;
 float amount = 15.0, paidamt = 0, totalAmount = 0;
 unsigned long lastMillis = 0;
 
-float lastAmount = 0;
+String lastAmount = "";
 
 #define R1 15
 #define R2 2

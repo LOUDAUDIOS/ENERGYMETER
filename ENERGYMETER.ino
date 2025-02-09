@@ -107,8 +107,8 @@ void loop() {
   if (voltage >= 0) {
     if (millis() - tt > 3000) {
       tt = millis();
-      if ((amount != lastAmount) && paidamt > 0) {
-        lastAmount = amount;
+      if ((String(amount,2) != lastAmount) && paidamt > 0) {
+        lastAmount = String(amount,2);
         totalAmount += amount;
         saveEp();
       }
