@@ -107,11 +107,22 @@ void loop() {
   if (voltage >= 0) {
     if (millis() - tt > 3000) {
       tt = millis();
-      if ((String(amount,2) != lastAmount) && paidamt > 0) {
-        lastAmount = String(amount,2);
-        totalAmount += amount;
-        saveEp();
-      }
+    if (!isnan(energy)) {
+        if (energy >= lastEnergy) {
+            // Add only the difference
+            totalEnergy += (energy - lastEnergy);
+            saveEp();
+        } 
+        else {
+            // PZEM reset detected, add full value
+            totalEnergy += energy;
+            saveEp();
+        }
+
+        // Store the current reading as the last reading
+        lastEnergy = energy;
+        totalAmount = calculateBill(totalEnergy);
+    }
       postData();
     }
     // Serial.printf("Voltage: %.2fV, Current: %.2fA, Power: %.2fW, Energy: %.2fkWh\n", voltage, current, power, energy);
@@ -120,7 +131,7 @@ void loop() {
   }
 
   // Calculate the bill based on energy consumption
-  amount = calculateBill(energy);
+  // amount = calculateBill(energy);
 
 
 
@@ -166,13 +177,13 @@ void postData() {
   // postTimer.reset();
 }
 
-float calculateBill(float energy) {
-  if (energy <= 50) return energy * 3.35;
-  if (energy <= 100) return 50 * 3.35 + (energy - 50) * 4.25;
-  if (energy <= 150) return 50 * 3.35 + 50 * 4.25 + (energy - 100) * 5.35;
-  if (energy <= 200) return 50 * 3.35 + 50 * 4.25 + 50 * 5.35 + (energy - 150) * 7.20;
-  if (energy <= 250) return 50 * 3.35 + 50 * 4.25 + 50 * 5.35 + 50 * 7.20 + (energy - 200) * 8.50;
-  return energy * 6.75;  // Non-Telescopic Rate
+float calculateBill(float en) {
+  if (en <= 50) return en * 3.35;
+  if (en <= 100) return 50 * 3.35 + (en - 50) * 4.25;
+  if (en <= 150) return 50 * 3.35 + 50 * 4.25 + (en - 100) * 5.35;
+  if (en <= 200) return 50 * 3.35 + 50 * 4.25 + 50 * 5.35 + (en - 150) * 7.20;
+  if (en <= 250) return 50 * 3.35 + 50 * 4.25 + 50 * 5.35 + 50 * 7.20 + (en - 200) * 8.50;
+  return en * 6.75;  // Non-Telescopic Rate
 }
 
 String createJson() {
