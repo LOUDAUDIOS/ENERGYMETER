@@ -104,26 +104,13 @@ void loop() {
   energy = pzem.energy();
   frequency = pzem.frequency();
   pf = pzem.pf();
+  // pzem.resetEnergy();
+
+  
 
   if (voltage >= 0) {
     if (millis() - tt > 3000) {
       tt = millis();
-    if (!isnan(energy)) {
-        if (energy >= lastEnergy) {
-            // Add only the difference
-            totalEnergy += (energy - lastEnergy);
-            saveEp();
-        } 
-        else {
-            // PZEM reset detected, add full value
-            totalEnergy += energy;
-            saveEp();
-        }
-
-        // Store the current reading as the last reading
-        lastEnergy = energy;
-        totalAmount = calculateBill(totalEnergy);
-    }
       postData();
     }
     // Serial.printf("Voltage: %.2fV, Current: %.2fA, Power: %.2fW, Energy: %.2fkWh\n", voltage, current, power, energy);
@@ -132,7 +119,17 @@ void loop() {
   }
 
   // Calculate the bill based on energy consumption
-  // amount = calculateBill(energy);
+  amount = calculateBill(energy);
+
+  if(paidamt - amount <=0){
+    digitalWrite(R1, 0);
+    digitalWrite(R2, 0);
+    digitalWrite(R3, 0);
+    nobalance = 1;
+  }
+  else{
+    nobalance = 0;
+  }
 
 
 
@@ -196,7 +193,7 @@ String createJson() {
   json += "\"pf\":" + String(pf) + ",";
   json += "\"power\":" + String(power) + ",";
   json += "\"energy\":" + String(energy) + ",";
-  json += "\"amount\":" + String(totalAmount) + ",";
+  json += "\"amount\":" + String(amount) + ",";
   json += "\"paid\":" + String(paidamt);
   json += "}";
   return json;

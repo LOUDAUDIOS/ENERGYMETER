@@ -35,6 +35,7 @@ int frequency = 48;
 bool load1State = true;
 bool load2State = false;
 bool load3State = true;
+bool nobalance = true;
 float current = 1.5;
 float power = 330;
 float energy = 0.1;
@@ -77,14 +78,14 @@ void saveEp() {
   // preferences.clear();
   preferences.begin("my-app", false);
   preferences.putFloat("paidamt", paidamt);
-  preferences.putFloat("totalenergy", totalEnergy);
+  // preferences.putFloat("totalenergy", totalEnergy);
   preferences.end();
 }
 
 void readEp() {
   preferences.begin("my-app", false);
   paidamt = preferences.getFloat("paidamt");
-  totalEnergy = preferences.getFloat("totalenergy");
+  // totalEnergy = preferences.getFloat("totalenergy");
 }
 
 void parseJson(String json) {
@@ -117,7 +118,7 @@ void parseJson(String json) {
   }
 
   // Check and update load states
-  if (doc.containsKey("load1State")) {
+  if (doc.containsKey("load1State")&&!nobalance) {
     load1State = doc["load1State"];
     digitalWrite(R1, load1State);
     Serial.print("Load 1: ");
@@ -125,14 +126,14 @@ void parseJson(String json) {
     // lcd.setCursor()
   }
 
-  if (doc.containsKey("load2State")) {
+  if (doc.containsKey("load2State")&&!nobalance) {
     load2State = doc["load2State"];
     digitalWrite(R2, load2State);
     Serial.print("Load 2: ");
     Serial.println(load2State ? "ON" : "OFF");
   }
 
-  if (doc.containsKey("load3State")) {
+  if (doc.containsKey("load3State") && !nobalance) {
     load3State = doc["load3State"];
     digitalWrite(R3, load3State);
     Serial.print("Load 3: ");
@@ -140,10 +141,10 @@ void parseJson(String json) {
   }
 
   if (doc.containsKey("paid")) {
-    totalAmount = 0;
+    pzem.resetEnergy();
     paidamt = doc["paid"];
-    Serial.println("Paid amount:"+String(paidamt));
     saveEp();
+    Serial.println("Paid amount:"+String(paidamt));
     client.publish(serverTopic, "paymentsuccess");
     delay(2000);
     ESP.restart();
