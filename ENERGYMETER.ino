@@ -104,6 +104,7 @@ void loop() {
   energy = pzem.energy();
   frequency = pzem.frequency();
   pf = pzem.pf();
+
   if (voltage >= 0) {
     if (millis() - tt > 3000) {
       tt = millis();
@@ -187,6 +188,7 @@ float calculateBill(float en) {
 }
 
 String createJson() {
+  if(isnan(totalAmount))totalAmount=0;
   String json = "{";
   json += "\"voltage\":" + String(voltage) + ",";
   json += "\"current\":" + String(current) + ",";
