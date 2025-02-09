@@ -77,14 +77,14 @@ void saveEp() {
   // preferences.clear();
   preferences.begin("my-app", false);
   preferences.putFloat("paidamt", paidamt);
-  preferences.putFloat("totalAmount", totalAmount);
+  preferences.putFloat("totalenergy", totalEnergy);
   preferences.end();
 }
 
 void readEp() {
   preferences.begin("my-app", false);
   paidamt = preferences.getFloat("paidamt");
-  totalAmount = preferences.getFloat("totalAmount");
+  totalEnergy = preferences.getFloat("totalenergy");
 }
 
 void parseJson(String json) {
