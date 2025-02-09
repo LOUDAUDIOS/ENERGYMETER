@@ -142,7 +142,8 @@ void parseJson(String json) {
 
   if (doc.containsKey("paid")) {
     pzem.resetEnergy();
-    paidamt += doc["paid"];
+    float paid = doc["paid"];
+    paidamt += paid;
     saveEp();
     Serial.println("Paid amount:"+String(paidamt));
     client.publish(serverTopic, "paymentsuccess");
